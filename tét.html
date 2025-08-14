@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Thiệp Sinh Nhật 💌</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #fff8e1, #ffe0f0);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+    .button {
+      background-color: #ff4081;
+      color: white;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.2em;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease;
+      z-index: 2;
+    }
+
+    .button:hover {
+      background-color: #f50057;
+      transform: scale(1.05);
+    }
+
+    .envelope {
+      position: relative;
+      width: 400px;
+      height: 280px;
+      margin-top: 40px;
+      background: #fcb69f;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      overflow: hidden;
+      display: none;
+      perspective: 1000px;
+    }
+
+    .flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      background: #fcaeae;
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      transform-origin: top center;
+      transform-style: preserve-3d;
+      z-index: 3;
+    }
+
+    .flap.open {
+      animation: flapOpen 2s ease forwards;
+    }
+
+    .letter {
+      position: absolute;
+      bottom: -100%;
+      left: 20px;
+      right: 20px;
+      height: 220px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 1em;
+      color: #333;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+      opacity: 0;
+      animation: slideUp 2s ease 2s forwards;
+      z-index: 2;
+      text-align: center;
+    }
+
+    @keyframes flapOpen {
+      from { transform: rotateX(0deg); }
+      to { transform: rotateX(180deg); }
+    }
+
+    @keyframes slideUp {
+      from { bottom: -100%; opacity: 0; }
+      to { bottom: 20px; opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <button class="button" onclick="openEnvelope()">Nhấn vào đây </button>
+
+  <div class="envelope" id="envelope">
+    <div class="flap" id="flap"></div>
+    <div class="letter">
+      🎉 <strong>HAPPY XXXXXXXXXX!</strong><br><br>
+      Mong em luôn rực rỡ như ánh nắng miền Tây, cười thật nhiều như nắng tháng Tám, và sống thật hồn nhiên như chính cái tên của em.
+      Tuổi mới thật nhiều niềm vui, tiền tài, và đừng quên chia sẻ một ít với anh nha! ❤️
+       <strong>happy birthday XXXXXXXXXXXXXXXXXXX<br><br><br>
+       <strong>Người gửi
+       Nguyễn Chí Thịnh.<br>
+    </div>
+  </div>
+
+  <audio id="openSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_3f0c3f3b9e.mp3?filename=paper-open-113219.mp3"></audio>
+
+  <script>
+    function openEnvelope() {
+      document.querySelector(".button").style.display = "none";
+      document.getElementById("envelope").style.display = "block";
+      document.getElementById("flap").classList.add("open");
+      document.getElementById("openSound").play();
+    }
+  </script>
+</body>
+<canvas id="fireworksCanvas"></canvas>
+
+<script>
+  const canvas = document.getElementById('fireworksCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.style.position = 'fixed';
+  canvas.style.top = '0';
+  canvas.style.left = '0';
+  canvas.style.pointerEvents = 'none';
+  canvas.style.zIndex = '999';
+
+  let particles = [];
+
+  function createFireworks() {
+    for (let i = 0; i < 100; i++) {
+      particles.push({
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        radius: Math.random() * 3 + 2,
+        color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+        angle: Math.random() * 2 * Math.PI,
+        speed: Math.random() * 5 + 2,
+        alpha: 1
+      });
+    }
+    animateFireworks();
+  }
+
+  function animateFireworks() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.x += Math.cos(p.angle) * p.speed;
+      p.y += Math.sin(p.angle) * p.speed;
+      p.alpha -= 0.01;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.alpha;
+      ctx.fill();
+    });
+    particles = particles.filter(p => p.alpha > 0);
+    if (particles.length > 0) {
+      requestAnimationFrame(animateFireworks);
+    } else {
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  function openEnvelope() {
+    document.querySelector(".button").style.display = "none";
+    document.getElementById("envelope").style.display = "block";
+    document.getElementById("flap").classList.add("open");
+    document.getElementById("openSound").play();
+    createFireworks(); // 🎆 Gọi pháo hoa khi mở thư
+  }
+</script>	
+</html>
